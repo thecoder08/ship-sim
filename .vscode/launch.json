@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Game",
+            "type": "nwjs",
+            "request": "launch",
+            "runtimeExecutable": "/home/lennonmclean/.nwjs/nw",
+            "runtimeArgs": [
+                "${workspaceRoot}",
+                "--remote-debugging-port=9222"
+            ],
+            "webRoot": "${workspaceRoot}",
+            "sourceMaps": true,
+            "port": 9222
+        }
+    ]
+}
