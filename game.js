@@ -96,6 +96,7 @@ loader.load('models/throttle/throttle.obj', function(object) {
 });
 
 function loop() {
+    requestAnimationFrame(loop);
     document.querySelector('canvas').oncontextmenu = null;
     updateShip();
     updateUI();
@@ -105,7 +106,6 @@ function loop() {
     controls.target = ship.position;
     controls.update();
     renderer.render(scene, camera);
-    requestAnimationFrame(loop);
 }
 
 // TODO: Swap button and keypad for COM. Toggle switch for NAV. display coords and speed for GPS only, display N/A for radar. Display other vessels and more detailed terrain with radar.

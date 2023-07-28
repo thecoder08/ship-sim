@@ -15,18 +15,37 @@ camera.add(rpmGaugeGroup);
 rpmGauge.renderOrder = 999;
 rpmGaugeGroup.position.set(-4, 2.5, -5);
 
-new THREE.FontLoader().load('fonts/DejaVu Sans_Book.json', function(font) {
-    var transmissionGeometry = new THREE.TextGeometry('Transmission: Neutral', {font: font});
+var transmissionStatus;
+var textFont;
+new THREE.FontLoader().load('fonts/helvetiker_regular.typeface.json', function(font) {
+    textFont = font;
+    var transmissionGeometry = new THREE.TextGeometry('Transmission: N', {font: font, size: 0.2, height: 0});
     var transmissionMaterial = new THREE.MeshBasicMaterial({color: 0x000000, depthTest: false});
-    var transmissionStatus = new THREE.Mesh(transmissionGeometry, transmissionMaterial);
+    transmissionStatus = new THREE.Mesh(transmissionGeometry, transmissionMaterial);
     camera.add(transmissionStatus);
-    transmissionStatus.renderOrder = 999;
-    transmissionStatus.position.set(0, 0, -5);
+    transmissionStatus.renderOrder = 997;
+    transmissionStatus.position.set(-5, 1, -5);
 }, undefined, function(err) {
     console.log(err.toString());
 });
 
+var status = 'N';
+var oldstatus = '';
 function updateUI() {
     rpmGaugeGroup.rotation.z = (Math.abs(thrust) * -475) + (Math.PI + Math.PI/4);
-    //transmissionStatus.rotation.y += 0.1;
+    oldstatus = status;
+    if (thrust <= 0.001 && thrust >= -0.001) {
+        status = 'N';
+    }
+    if (thrust > 0.001) {
+        status = 'F';
+    }
+    if (thrust < -0.001) {
+        status = 'R';
+    }
+    if (oldstatus !== status) {
+        console.log('changed');
+        transmissionStatus.geometry.dispose();
+        transmissionStatus.geometry = new THREE.TextGeometry('Transmission: ' + status, {font: textFont, size: 0.2, height: 0});
+    }
 }

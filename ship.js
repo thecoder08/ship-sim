@@ -51,8 +51,10 @@ function updateShip() {
         }
     }
     throttle.rotation.z = thrust * 100;
-    // apply thrust force
-    speed += thrust / mass;
+    // apply thrust force if not in neutral
+    if (thrust > 0.001 || thrust < -0.001) {
+        speed += thrust / mass;
+    }
     if (aDown) {
         ship.rotation.y += speed/10;
     }
