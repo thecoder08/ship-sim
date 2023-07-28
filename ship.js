@@ -6,14 +6,29 @@ var mass = 10; // determines inertia
 var dcof = 0.05; // determines top speed
 
 var ship;
+var radarMesh;
+var radar = new THREE.Group();
 loader.load('models/ship/ship.obj', function(object) {
     ship = object;
     object.traverse(function (child) {
-        if (child instanceof THREE.Mesh) {
+        if (child.name == 'ship') {
             child.material = new THREE.MeshStandardMaterial({map: new THREE.TextureLoader().load('textures/ship.png')});
             child.castShadow = true;
         }
+        if (child.name == 'radar_stand') {
+            child.material = new THREE.MeshStandardMaterial({color: 0xffffff});
+            child.castShadow = true;
+        }
+        if (child.name == 'radar') {
+            radarMesh = child;
+            child.material = new THREE.MeshStandardMaterial({color: 0x000000});
+            child.castShadow = true;
+        }
     });
+    ship.add(radar);
+    radar.add(radarMesh);
+    radarMesh.position.set(0.49, -1.11, -0.49);
+    radar.position.set(-0.49, 1.11, 0.49);
     scene.add(object);
     ship.position.set(2, 0, -5);
 }, undefined, function(err) {
@@ -21,6 +36,8 @@ loader.load('models/ship/ship.obj', function(object) {
 });
 
 function updateShip() {
+    // spin the radar
+    radar.rotation.y += 0.05;
     if (wDown) {
         // apply thrust force
         if (thrust < 0.01) {

@@ -43,7 +43,7 @@ loader.load('models/crane/crane.obj', function(object) {
     trolley.add(wire);
     scene.add(object);
     crane.scale.set(0.1, 0.1, 0.1);
-    crane.position.set(9.5, 0, -5);
+    crane.position.set(0, 0, -5);
     loop();
 }, undefined, function(err) {
     throw err;
