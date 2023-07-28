@@ -1,15 +1,16 @@
 var scene = new THREE.Scene();
 scene.background = new THREE.CubeTextureLoader().setPath('textures/skybox/').load(['Daylight Box_Right.bmp', 'Daylight Box_Left.bmp', 'Daylight Box_Top.bmp', 'Daylight Box_Bottom.bmp', 'Daylight Box_Front.bmp', 'Daylight Box_Back.bmp']);
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = -7;
+camera.position.y = 2;
+scene.add(camera);
 var renderer = new THREE.WebGLRenderer();
+//renderer.shadowMap.enabled = true;  idk why this isn't working
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-var loader = new THREE.GLTFLoader();
-var controls = new THREE.PointerLockControls(camera, document.body);
-controls.lock();
-document.body.onclick = function() {
-    controls.lock();
-}
+var loader = new THREE.OBJLoader();
+var controls = new THREE.OrbitControls(camera, document.body);
+controls.enablePan = false;
 var aDown = false;
 var dDown = false;
 var wDown = false;
@@ -17,9 +18,6 @@ var sDown = false;
 var shiftDown = false;
 var spaceDown = false;
 document.body.onkeydown = function(event) {
-    if (event.code == 'Escape') {
-        controls.unlock();
-    }
     if (event.code == 'F11') {
         nw.Window.get().toggleFullscreen();
     }
@@ -68,43 +66,46 @@ window.onresize = function() {
     camera.updateProjectionMatrix();
 }
 
-var light = new THREE.AmbientLight(0xffffff);
-scene.add(light);
+var ambientLight = new THREE.AmbientLight(0xaaaaaa);
+scene.add(ambientLight);
+var pointLight = new THREE.PointLight(0xffffff);
+pointLight.position.set(0, 50, 0);
+pointLight.castShadow = true;
+scene.add(pointLight);
 
 var groundGeometry = new THREE.PlaneGeometry(100, 100);
-var groundTexture = new THREE.TextureLoader().load('textures/ground/ground.jpg');
-var groundMaterial = new THREE.MeshPhysicalMaterial({ map: groundTexture });
+var groundTexture = new THREE.TextureLoader().load('textures/water.jpg');
+var groundMaterial = new THREE.MeshStandardMaterial({ map: groundTexture });
 var ground = new THREE.Mesh(groundGeometry, groundMaterial);
 ground.rotation.x = THREE.MathUtils.degToRad(-90);
+ground.receiveShadow = true;
 scene.add(ground);
 
-loader.load('models/building/scene.gltf', function(gltf) {
-    scene.add(gltf.scene);
+var throttle;
+loader.load('models/throttle/throttle.obj', function(object) {
+    throttle = object;
+    object.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
+            //child.material.map = new THREE.TextureLoader().load('textures/ship.png');
+            child.material = new THREE.MeshStandardMaterial({color: 0xaaaaaa});
+        }
+    });
+    scene.add(object);
 }, undefined, function(err) {
-    console.log(err);
+    console.log(err.toString());
 });
 
 function loop() {
-    if (aDown) {
-        controls.moveRight(-0.1);
-    }
-    if (dDown) {
-        controls.moveRight(0.1);
-    }
-    if (sDown) {
-        controls.moveForward(-0.1);
-    }
-    if (wDown) {
-        controls.moveForward(0.1);
-    }
-    if (shiftDown) {
-        camera.position.y -= 0.1;
-    }
-    if (spaceDown) {
-        camera.position.y += 0.1;
-    }
+    document.querySelector('canvas').oncontextmenu = null;
+    updateShip();
+    updateUI();
+    updateCrane();
+    camera.position.x += speed * Math.sin(ship.rotation.y);
+    camera.position.z += speed * Math.cos(ship.rotation.y);
+    controls.target = ship.position;
+    controls.update();
     renderer.render(scene, camera);
     requestAnimationFrame(loop);
 }
-loop();
-nw.Window.get().toggleFullscreen();
+
+// TODO: Swap button and keypad for COM. Toggle switch for NAV. display coords and speed for GPS only, display N/A for radar. Display other vessels and more detailed terrain with radar.

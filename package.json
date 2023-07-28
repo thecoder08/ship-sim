@@ -1,7 +1,7 @@
 {
-  "name": "lac",
+  "name": "ship-sim",
   "version": "1.0.0",
-  "description": "An open-world simulation game.",
+  "description": "A simulator for large or small ships.",
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

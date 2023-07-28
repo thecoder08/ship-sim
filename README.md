@@ -1,2 +1,2 @@
-# Law Abiding Citizens
-LAC is an open-world simulation game.
+# Ship Sim
+This is a simulator for small to large ships. It simulates realistic physics and explorable bridges.
