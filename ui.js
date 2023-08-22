@@ -44,7 +44,6 @@ function updateUI() {
         status = 'R';
     }
     if (oldstatus !== status) {
-        console.log('changed');
         transmissionStatus.geometry.dispose();
         transmissionStatus.geometry = new THREE.TextGeometry('Transmission: ' + status, {font: textFont, size: 0.2, height: 0});
     }

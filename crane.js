@@ -44,13 +44,12 @@ loader.load('models/crane/crane.obj', function(object) {
     scene.add(object);
     crane.scale.set(0.1, 0.1, 0.1);
     crane.position.set(0, 0, -5);
-    loop();
 }, undefined, function(err) {
     throw err;
 });
 
 function updateCrane() {
-    boom.rotation.y += 0.01;
+    boom.rotation.y += 0.016;
     trolley.position.z = Math.sin(boom.rotation.y) * 6 - 6;
     wire.scale.y = Math.sin(boom.rotation.y) * -5 + 5.5;
     wire.position.y = -37.5 * wire.scale.y + 37 - (wire.scale.y / 2);
